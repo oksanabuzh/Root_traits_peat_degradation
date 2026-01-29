@@ -80,6 +80,53 @@ write_csv(as.data.frame(FuncComp) %>%
 
 ## 2) Functional diversity ----
 
+
+?dbFD
+
+
+traits_modif <- traits %>% 
+ rownames_to_column("species") %>% 
+ # filter(species=="Carex_pseudocyperus") %>%
+  select(species, lifespan) %>%
+  column_to_rownames("species")
+
+
+
+# Load  data ----
+sp_compos <- read_csv("data/processed_data/species_composition.csv") %>% 
+  select(-Calliergonella_cuspidata) %>% 
+  column_to_rownames("plot_ID") 
+
+trait_data <- read_csv("data/processed_data/interspecific_traits.csv") %>% 
+  filter(species != "Calliergonella_cuspidata")
+
+# Prepare trait matrix ----
+# make sure species names are same order as in sp_compos
+traits <- sp_compos %>% 
+  pivot_longer(everything(),names_to = "species", values_to = "cover") %>%
+  select(-cover) %>%
+  distinct() %>% 
+  left_join(trait_data,
+            by = "species") %>% 
+  column_to_rownames("species")
+
+
+traits_modif <- traits %>%
+  select(PFT, lifespan)
+
+FuncDiv <- FD::dbFD(x=traits_modif, 
+                    as.matrix(sp_compos), 
+              calc.CWM = F,
+              corr = c("cailliez"))
+
+
+str(FuncDiv)
+
+
+
+
+###########################################################
+
 # When calculating functional diversity, FD::dbFD Error occurs when mixed categorical and numeric traits
 # thus, convert categorical traits to wide format for each category
 
@@ -90,38 +137,39 @@ traits_modif <- traits %>% rownames_to_column("species") %>%
               names_prefix = "Aerenchyma_") %>% 
   mutate(across(starts_with("Aerenchyma_"), ~ replace(.x, Aerenchyma_NA==1, NA))) %>%
   select(-Aerenchyma_NA) %>% 
-# for column AMF_type, create a wide format 
+  # for column AMF_type, create a wide format 
   mutate(present = 1) %>%
   pivot_wider(names_from = AMF_type, values_from=present, values_fill = 0,
               names_prefix = "AMF_") %>% 
   mutate(across(starts_with("AMF_"), ~ replace(.x, AMF_NA==1, NA))) %>%
   select(-AMF_NA) %>% 
-# for column peat_association, create a wide format 
+  # for column peat_association, create a wide format 
   mutate(present = 1) %>%
   pivot_wider(names_from = peat_association, values_from=present, values_fill = 0,
               names_prefix = "Peat.Sp_") %>% 
   mutate(across(starts_with("Peat.Sp_"), ~ replace(.x, Peat.Sp_NA==1, NA))) %>%
   select(-Peat.Sp_NA) %>% 
-# for column PFT, create a wide format 
+  # for column PFT, create a wide format 
   mutate(present = 1) %>%
   pivot_wider(names_from = PFT, values_from=present, values_fill = 0,
               names_prefix = "PFT_") %>% 
   mutate(across(starts_with("PFT_"), ~ replace(.x, PFT_NA==1, NA))) %>%
   select(-PFT_NA) %>% 
-# for column lifespan, create a wide format 
+  # for column lifespan, create a wide format 
   mutate(present = 1) %>%
   pivot_wider(names_from = lifespan, values_from=present, values_fill = 0,
               names_prefix = "LifeSpan_") %>% 
   mutate(across(starts_with("LifeSpan_"), ~ replace(.x, LifeSpan_NA==1, NA))) %>%
   select(-LifeSpan_NA) %>% 
   column_to_rownames("species")
-  
+
 str(traits_modif)
 
+FuncDiv <- FD::dbFD(x=traits_modif, 
+                    as.matrix(sp_compos), 
+                    calc.CWM = F,
+                    corr = c("cailliez"))
 
-FuncDiv <- FD::dbFD(traits_modif, as.matrix(sp_compos), 
-              calc.CWM = F,
-         corr = c("cailliez"))
 
 str(FuncDiv)
 
