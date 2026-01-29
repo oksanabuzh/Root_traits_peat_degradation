@@ -1,5 +1,7 @@
 # data folder
 data/
+data/raw_data
+data/metadata_excel_files
 
 # first code drafts (not optimised)
 code_drafts/
