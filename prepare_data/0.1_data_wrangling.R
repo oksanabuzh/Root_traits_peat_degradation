@@ -1,7 +1,7 @@
 # Script to wrangle raw data into analysis-ready format
 
-#
-species_cover_BB_dataset
+# Load required packages ------------------------------------------------------
+library(tidyverse)
 
 ## Species composition matrix ------------
 sp_compos <- read_csv("data/raw_data/species_cover_BB_dataset.csv")
@@ -84,8 +84,15 @@ sp_compos %>%
 # "Achillea_millefolium" is in traits data but wrongly spelled
 # "Calliergonella_cuspidata" is missing from traits data
 
+
 traits <- traits %>% 
   # fix spelling mistake
   mutate(species = ifelse(species == "Achillea_ millefolium", 
-                          "Achillea_millefolium", species))
+                          "Achillea_millefolium", species)) %>% 
+# add Calliergonella_cuspidata with NA trait values
+# !!!! ask Jule to fix it manually, this now is only for script drafts ----
+  add_row(species = "Calliergonella_cuspidata")
+
+
+
 write_csv(traits, "data/processed_data/interspecific_traits.csv")

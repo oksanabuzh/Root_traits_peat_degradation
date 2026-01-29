@@ -6,8 +6,12 @@ library(tidyverse)
 ## Species composition ------------
 # in original dataset called "species_cover_BB_dataset.xlsx"
 sp_compos <- read_csv("data/processed_data/species_composition.csv")
-
 sp_compos
+
+
+## Diversity measures ------------
+species_div <- read_csv("data/processed_data/species_diversity.csv")
+species_div
 
 ## Environmental variables ---------
 envar_var <- read_csv("data/processed_data/environmental_data.csv") 
@@ -33,10 +37,11 @@ envar_var %>%
 
 
 ## Traits
-traits <- read_csv("data/traits_species_mean_dataset.csv")
+traits <- read_csv("data/processed_data/interspecific_traits.csv")
 traits
 
 summary(traits)
 
 traits %>% 
-  filter(is.na(SLA))
+  filter(is.na(aerenchyma))
+
