@@ -10,7 +10,7 @@ dir.create(tempdir())
 # Load and prepare the raw data -----------------------------------------------
 
 ## species composition ------------
-sp_compos <- read_csv("data/raw_data/species_composition.csv")
+sp_compos <- read_csv("data/processed_data/species_composition.csv")
 
 sp_compos
 
