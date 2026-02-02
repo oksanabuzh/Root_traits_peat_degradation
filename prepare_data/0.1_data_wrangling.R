@@ -7,7 +7,8 @@ library(tidyverse)
 sp_compos <- read_csv("data/raw_data/species_cover_BB_dataset.csv") %>% 
   select(- Calliergonella_cuspidata) # remove the only moss species
 
-sp_compos
+sp_compos %>% 
+  print(n=Inf)
 
 # Data exploration:
 # check for NA‘s
@@ -48,7 +49,9 @@ envar_var <- read_csv("data/raw_data/CWM_dataset_160126.csv")  %>%
   # remove root traits from the data
   select(-c(SRL, AD, RTD, AMF))
 
-envar_var
+envar_var %>% 
+  print(n=Inf)
+
 names(envar_var)
 
 
